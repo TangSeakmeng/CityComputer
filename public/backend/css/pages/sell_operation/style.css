@@ -1,0 +1,123 @@
+#sellContainer {
+    width: 100%;
+    padding: 20px 5%;
+    background: white;
+    border-top: 1px solid #c9c9c9;
+    border-bottom: 1px solid #c9c9c9;
+}
+
+.sellHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sellContent {
+    width: 100%;
+    height: auto;
+    display: flex;
+}
+
+.sellContent .rightSide_container {
+    width: 50%;
+}
+
+.sellContent .leftSide_container {
+    width: 50%;
+}
+
+#containerProductsPreview {
+    width: 100%;
+    height: auto;
+    overflow: auto;
+    background-color: #E8E8E8;
+    padding: 20px;
+}
+
+#sellContainer .productContainer {
+    transition: 0.5s;
+    padding: 20px;
+    width: calc(25% - 10px);
+    margin-right: 10px;
+    margin-top: 10px;
+    height: 270px;
+    background-color: white;
+    float: left;
+    text-align: center;
+    overflow: hidden;
+}
+
+#sellContainer .productContainer:hover {
+    transition: 0.5s;
+    cursor: pointer;
+    box-shadow: 0px 0px 8px #95c5ed;
+    border-radius: 5px;
+}
+
+#sellContainer .productContainer .imageContainer {
+    width: 100%;
+    height: 100px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sellContainer .productContainer .imageContainer img {
+    height: 100%;
+}
+
+
+#sellContainer .productContainer .textContainer {
+    margin-top: 20px;
+    font-size: 12px;
+}
+
+#sellContainer .productContainer p {
+    font-size: 12px;
+}
+
+.footerTableContainer {
+    width: 100%;
+    border-top: 1px solid black;
+    padding-top: 20px;
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footerTableContainer .totalQuantityContainer {
+    text-align: right;
+    padding: 20px;
+    width: 49%;
+    background-color: #EBEBEB;
+}
+
+.footerTableContainer .subTotalContainer {
+    text-align: right;
+    padding: 20px;
+    width: 49%;
+    background-color: #EBEBEB;
+}
+
+.footerCheckOutTableContainer {
+    width: 100%;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footerCheckOutTableContainer div {
+    text-align: right;
+    padding: 20px;
+    width: 49%;
+    background-color: #EBEBEB;
+}

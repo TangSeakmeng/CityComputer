@@ -1,0 +1,13 @@
+#layout_Sidebar_ImageSlideShow_Container {
+    width: 100%;
+    padding: 0px 15%;
+    display: flex;
+}
+
+#layout_Sidebar_ImageSlideShow_Container #layout_Sidebar_Container {
+    width: 200px;
+}
+
+#layout_Sidebar_ImageSlideShow_Container #layout_ImageSlideShow_Container {
+    width: calc(100% - 200px);
+}

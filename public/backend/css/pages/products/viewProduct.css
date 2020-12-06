@@ -1,0 +1,63 @@
+.viewProductHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.groupActionButtons {
+    display: flex;
+}
+
+.groupActionButtons a, .groupActionButtons button {
+    margin-right: 4px;
+    height: 100%;
+}
+
+.groupActionButtons .actionButtonIcon {
+    width: 30px;
+}
+
+.blockContainer {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+}
+
+.blockContainer div {
+    width: 50%;
+}
+
+.blockContainer .leftSideContainer {
+
+}
+
+.blockContainer .leftSideContainer ul {
+    margin-left: 20px;
+}
+
+.blockContainer .leftSideContainer .descriptionContainer {
+    margin-top: 20px;
+    width: 90%;
+    padding: 20px;
+    background-color: #EAEAEA;
+    border-radius: 5px;
+    color: black;
+}
+
+.blockContainer .leftSideContainer .detailContainer {
+    width: 90%;
+    padding: 20px;
+    background-color: #EAEAEA;
+    border-radius: 5px;
+    color: black;
+}
+
+.blockContainer .rightSideContainer {
+    height: 100%;
+}
+
+.blockContainer .rightSideContainer img {
+    height: 100%;
+}

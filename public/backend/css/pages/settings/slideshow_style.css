@@ -1,0 +1,36 @@
+#slideShowContainer {
+    width: 100%;
+    padding: 20px 5%;
+    background: white;
+    border-top: 1px solid #c9c9c9;
+    border-bottom: 1px solid #c9c9c9;
+}
+
+.uploadedImagesContainer {
+    width: 100%;
+    height: auto;
+    overflow: auto;
+}
+
+.uploadedImagesContainer .uploadedImageContainer {
+    width: 400px;
+    height: auto;
+    float: left;
+
+    padding: 20px;
+    background-color: gainsboro;
+    border-radius: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.uploadedImagesContainer .uploadedImageContainer .imageContainer {
+    width: 100%;
+    height: 200px;
+}
+
+.uploadedImagesContainer .uploadedImageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

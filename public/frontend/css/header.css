@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.aboveHeaderContainer {
+    width: 100%;
+    padding: 10px 15%;
+    background-color: #FAFAFA;
+    color: #0f6674;
+    text-align: right;
+}
+
+.aboveHeaderContainer p {
+    margin: 0;
+}
+
+
+.headerContainer {
+    width: 100%;
+    padding: 20px 15%;
+    box-shadow: 0px 10px 210px #cacaca;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.headerContainer .headerContainer_logo { }
+
+.headerContainer .headerContainer_logo img {
+    width: 200px;
+}
+
+.headerContainer .headerContainer_search {
+    border: 2px solid #0f6674;
+    border-radius: 5px;
+}
+
+.headerContainer .headerContainer_search input {
+    width: 300px;
+    border-radius: 10px;
+    padding: 15px;
+    border: none;
+}
+
+.headerContainer .headerContainer_search input:focus {
+    outline: none;
+}
+
+.headerContainer .headerContainer_search select {
+    width: 150px;
+    cursor: pointer;
+    background-color: #0f6674;
+    color: white;
+    padding: 16px;
+    border: none;
+    border-radius: 0px;
+}
+
+.headerContainer .headerContainer_search select:focus {
+    outline: none;
+}
+
+.headerContainer .headerContainer_search button {
+    cursor: pointer;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    padding: 16px;
+    border: none;
+    background-color: #0f6674;
+    color: white;
+    margin-left: -5px;
+}
+
+.headerContainer .headerContainer_search button:focus {
+    outline: none;
+}
+
+.headerContainer .headerContainer_search button:hover {
+    background: #0c5460;
+}
+
+.belowHeaderContainer {
+    width: 100%;
+    background-color: white;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.belowHeaderContainer .categoriesNavigation {
+    width: 200px;
+    padding: 10px;
+    background-color: #ececec;
+    color: #0f6674;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    float: left;
+}
+
+.belowHeaderContainer .categoriesNavigation .categoryIcon {
+    margin-right: 5px;
+}
+
+.belowHeaderContainer .navigationContainer {
+    width: calc(100% - 200px);
+    overflow: auto;
+}
+
+.belowHeaderContainer .navigationContainer ul {
+    display: flex;
+    margin: 0;
+}
+
+.belowHeaderContainer .navigationContainer ul li {
+    list-style-type: none;
+    padding: 10px 20px;
+}
+
+.belowHeaderContainer .navigationContainer ul li:first-child {
+    margin-left: 20px;
+}
+
+.belowHeaderContainer .navigationContainer ul li:hover {
+    background-color: #ECECEC;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}

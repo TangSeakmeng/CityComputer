@@ -1,0 +1,63 @@
+.navSidebarContainer {
+    width: 100%;
+    background-color: white;
+}
+
+.navSidebarContainer ul { }
+
+.navSidebarContainer ul li {
+    list-style-type: none;
+}
+
+.navSidebarContainer ul li .navElement {
+    position: relative;
+    padding: 15px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navSidebarContainer ul li .navElement span img {
+    width: 8px;
+}
+
+.navSidebarContainer ul li .navElement .subNavElements {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    left: 200px;
+    width: 200px;
+    box-shadow: 0px 0px 4px #b9b9b9;
+}
+
+.navSidebarContainer ul li .navElement .subNavElements .subNavElement {
+    display: none;
+    padding: 15px;
+    font-weight: normal;
+    background-color: white;
+}
+
+.navSidebarContainer ul li .navElement .subNavElements .subNavElement p {
+    margin: 0;
+}
+
+.navSidebarContainer ul li .navElement .subNavElements .subNavElement:hover {
+    background-color: #b9b9b9;
+    color: white;
+}
+
+.navSidebarContainer ul li .navElement:hover {
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0px 0px 4px #b9b9b9;
+}
+
+.navSidebarContainer ul li .navElement:hover span {
+    color: #0f6674;
+}
+
+.navSidebarContainer ul li .navElement:hover .subNavElements .subNavElement {
+    display: block;
+}
