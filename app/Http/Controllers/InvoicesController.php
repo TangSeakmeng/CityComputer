@@ -109,4 +109,18 @@ class InvoicesController extends Controller
             return response()->json(['error' => $exception->getMessage()], 401);
         }
     }
+
+    public static function invoiceNumber($invoiceNumber) {
+        try {
+            $invoiceId = DB::table('invoices')->select('id')->where('invoice_number', '=', $invoiceNumber)->first();
+
+            if($invoiceId == null) {
+                return response()->json(['message' => 'Invoice Number is not found!'], 201);
+            }
+
+            return response()->json(['result' => $invoiceId], 201);
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 401);
+        }
+    }
 }

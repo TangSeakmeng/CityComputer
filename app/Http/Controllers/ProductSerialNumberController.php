@@ -38,6 +38,8 @@ class ProductSerialNumberController extends Controller
             DB::insert('insert into productssoldwithserialnumber(invoice_id, product_id, serial_number, warranty_period, expired_date, created_at, updated_at) values(?,?,?,?,?,?,?)',
             [$request->invoice_id, $request->product_id, $request->serial_number, $request->warranty_period, $request->expired_date, $dateNow, $dateNow]);
 
+            DB::update('update productserialnumbers set status = "Sold" where serial_number = ' . $request->serial_number . ' and product_id = ' . $request->product_id);
+
             return response()->json(['success' => 'Product Serial Number is added successfully.'], 201);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 401);

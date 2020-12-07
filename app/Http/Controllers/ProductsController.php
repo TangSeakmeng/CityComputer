@@ -251,4 +251,57 @@ class ProductsController extends Controller
             dd('File does not exists.');
         }
     }
+
+    public static function getProductIdFromSerialNumber($serialNumber) {
+        try {
+            $productId = DB::table('productserialnumbers')->select('product_id')->where('serial_number', '=', $serialNumber)->first();
+
+            if($productId == null) {
+                return response()->json(['message' => 'Product is not found!'], 201);
+            }
+
+            return response()->json(['result' => $productId], 201);
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 401);
+        }
+    }
+
+    public static function getProductWithSerialNumberByProductId($id, $serialNumber) {
+        try {
+            $data = DB::table('products')
+                ->join('categories', 'categories.id', '=', 'products.category_id')
+                ->join('brands', 'brands.id', '=', 'products.brand_id')
+                ->join('sale_statuses', 'sale_statuses.id', '=', 'products.sale_status_id')
+                ->where('products.id', '=', $id)
+                ->select('products.id', 'products.barcode', 'products.name', 'brands.name as brand_name',
+                    'categories.name as category_name', 'products.cost_of_sale', 'products.unit_in_stock', 'products.price',
+                    'products.discount_price', 'products.image_path', 'sale_statuses.name as sale_name', 'products.description',
+                    'products.created_at', 'products.updated_at')
+                ->first();
+
+            $data2 = DB::table('invoices')
+                ->join('users', 'users.id', '=', 'invoices.user_id')
+                ->join('invoicedetails', 'invoicedetails.invoice_id', '=', 'invoices.id')
+                ->join('productssoldwithserialnumber', 'productssoldwithserialnumber.invoice_id', '=', 'invoices.id')
+                ->select('invoices.id', "invoices.invoice_number", 'invoices.invoice_date', 'invoices.customer_name', 'invoices.customer_contact',
+                    'invoices.note', 'invoices.discount', 'invoices.subtotal', 'invoices.exchange_rate_in', 'invoices.exchange_rate_out', 'invoices.payment_method',
+                    'invoices.money_received_in_dollar', 'invoices.money_received_in_riel', 'invoices.created_at', 'users.name as username',
+                    'invoicedetails.price as sale_price')
+                ->where('productssoldwithserialnumber.serial_number', '=', $serialNumber)
+                ->first();
+
+            $data3 = DB::table('imports')
+                ->join('importdetails', 'importdetails.import_id', '=', 'imports.id')
+                ->join('productserialnumbers', 'productserialnumbers.import_id', '=', 'imports.id')
+                ->join('suppliers', 'suppliers.id', '=', 'imports.supplier_id')
+                ->join('users', 'users.id', '=', 'imports.user_id')
+                ->select('imports.id', 'imports.import_date', 'imports.invoice_number', 'suppliers.name as supplier_name', 'users.name as username')
+                ->where('productserialnumbers.serial_number', '=', $serialNumber)
+                ->first();
+
+            return view('backend.pages.checkingInformation.productInformation', compact('data', 'data2', 'data3'));
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }

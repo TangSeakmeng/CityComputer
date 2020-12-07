@@ -53,8 +53,10 @@ Route::resource('/admin/slideshow', SlideShowController::class);
 
 Route::get('/admin/products/getAllProducts', [ProductsController::class, 'getAllProducts']);
 Route::get('/admin/products/getProductByProductId/{id}', [ProductsController::class, 'getProductByProductId']);
+Route::get('/admin/products/getProductWithSerialNumberByProductId/{id}/{serialNumber}', [ProductsController::class, 'getProductWithSerialNumberByProductId']);
 Route::get('/admin/products/updatePublishedStatus/{id}/{published}', [ProductsController::class, 'updatePublishedStatus']);
 Route::get('/admin/products/updateSaleStatus/{id}/saleStatus', [ProductsController::class, 'updateSaleStatus']);
+Route::get('/admin/products/get_product_id/{serialNumber}', [ProductsController::class, 'getProductIdFromSerialNumber']);
 Route::post('/admin/products/searchProducts', [ProductsController::class, 'searchProducts']);
 Route::post('/admin/products/updateProduct/{id}', [ProductsController::class, 'updateProduct']);
 Route::post('/admin/products/updateProductPublished/{id}', [ProductsController::class, 'updateProductPublished']);
@@ -81,6 +83,7 @@ Route::post('/admin/searchProductsForSellPreviewByOption/', [SellOperationContro
 Route::post('/admin/invoicedetails/pay_more', [InvoicesController::class, 'payMore']);
 Route::get('/admin/invoices', [InvoicesController::class, 'index']);
 Route::get('/admin/invoice/{invoiceId}', [InvoicesController::class, 'printInvoice']);
+Route::get('/admin/get_invoice_id/{invoiceNumber}', [InvoicesController::class, 'invoiceNumber']);
 Route::get('/admin/invoicedetails/{invoiceId}', [InvoiceDetailsController::class, 'getInvoiceDetails']);
 Route::post('/admin/addInvoice', [InvoicesController::class, 'addInvoice']);
 Route::post('/admin/addInvoiceDetails', [InvoiceDetailsController::class, 'addInvoiceDetails']);

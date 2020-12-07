@@ -292,8 +292,12 @@
         }
 
         function addProductToCart(productIndex) {
+            let product = arr_resultSearchedProduct[productIndex];
+            addProductToCart2(product);
+        }
+
+        function addProductToCart2(product) {
             try {
-                let product = arr_resultSearchedProduct[productIndex];
                 let index = arr_addToCartProduct.findIndex((item) => item.product_id == product.product_id);
                 let temp_product = "";
 
@@ -327,6 +331,56 @@
                 alert(e);
             }
         }
+
+        document.querySelector('#txtKeyword').addEventListener('keyup', (e) => {
+            if(e.keyCode === 13) {
+                let keyword = document.querySelector('#txtKeyword').value;
+                let option = 'products.barcode';
+
+                document.getElementById('containerProductsPreview').innerHTML = '';
+
+                try {
+                    let xhr = new XMLHttpRequest();
+                    let formData = new FormData();
+
+                    formData.append("keyword", keyword);
+                    formData.append("option", option);
+
+                    xhr.onload = (format, data) => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            const response = JSON.parse(xhr.responseText);
+                            arr_resultSearchedProduct = response.data;
+
+                            response.data.forEach((item, index) => {
+                                let dom = document.createElement('div');
+                                dom.setAttribute('class', 'productContainer');
+                                dom.setAttribute('onclick', `addProductToCart(${index})`)
+                                dom.innerHTML = `
+                                <div class="barcodeContainer"><p>Code: ${item.product_barcode}</p></div>
+                                <div class="imageContainer"><img src="{{ asset("/uploaded_images/products/") }}/${item.image_path}"></div>
+                                <div class="textContainer"><p>${item.product_name}</p></div>
+                                `;
+                                document.getElementById('containerProductsPreview').appendChild(dom);
+                            });
+
+                            if(response.data.length == 1) {
+                                addProductToCart2(response.data[0]);
+                            }
+                        }
+                        else {
+                            const response = JSON.parse(xhr.responseText);
+                            alert(response.message);
+                        }
+                    };
+
+                    xhr.open("POST", "/admin/searchProductsForSellPreviewByOption/", true);
+                    xhr.setRequestHeader('x-csrf-token', '{{csrf_token()}}');
+                    xhr.send(formData);
+                } catch (e) {
+                    alert(e)
+                }
+            }
+        })
 
         function renderArr_addToCartProductToTable() {
             try {
