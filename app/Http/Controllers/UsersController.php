@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,18 +18,27 @@ class UsersController extends Controller
 
     public function index()
     {
+        if(Auth::user()->is_admin != 1)
+            return redirect('/admin');
+
         $users = User::all()->where('id', '<>', 1);
         return view('backend.pages.users.index', compact('users'));
     }
 
     public function create()
     {
+        if(Auth::user()->is_admin != 1)
+            return redirect('/admin');
+
         return view('backend.pages.users.addUser');
     }
 
     public function store(Request $request)
     {
         try {
+            if(Auth::user()->is_admin != 1)
+                return redirect('/admin');
+
             if(strlen($request->password) < 8){
                 return redirect('admin/users/create')->with('error', 'Password length must be greater than or equal 8 characters.');
             }
@@ -52,6 +62,9 @@ class UsersController extends Controller
 
     public function edit($id)
     {
+        if(Auth::user()->is_admin != 1)
+            return redirect('/admin');
+
         $user = User::find($id);
         return view('backend.pages.users.editUser', compact('user'));
     }
@@ -59,6 +72,9 @@ class UsersController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            if(Auth::user()->is_admin != 1)
+                return redirect('/admin');
+
             $dateNow = date('Y-m-d H:i:s');
 
             if($request->password == null) {
@@ -82,6 +98,9 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
+        if(Auth::user()->is_admin != 1)
+            return redirect('/admin');
+
         User::find($id)->delete();
         return redirect('/admin/users');
     }

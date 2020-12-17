@@ -18,6 +18,7 @@ class SellOperationController extends Controller
                 ->join('categories', 'products.category_id', '=', 'categories.id')
                 ->select('products.id as product_id', 'products.barcode as product_barcode', 'products.name as product_name', 'categories.name as category_name', 'brands.name as brand_name',
                 'products.price', 'products.image_path', 'products.unit_in_stock')
+                ->where('products.unit_in_stock', '>', '0')
                 ->orderBy('products.id', 'desc')
                 ->limit(20)
                 ->get();
@@ -41,6 +42,7 @@ class SellOperationController extends Controller
                     ->join('categories', 'products.category_id', '=', 'categories.id')
                     ->select('products.id as product_id', 'products.barcode as product_barcode', 'products.name as product_name', 'categories.name as category_name', 'brands.name as brand_name',
                         'products.price', 'products.image_path', 'products.unit_in_stock')
+                    ->where('products.unit_in_stock', '>', '0')
                     ->orderBy('products.id', 'desc')
                     ->limit(20)
                     ->get();
@@ -52,6 +54,7 @@ class SellOperationController extends Controller
                         'products.price', 'products.image_path', 'products.unit_in_stock')
                     ->orderBy('products.id', 'desc')
                     ->where($option, 'LIKE', "%{$keyword}%")
+                    ->where('products.unit_in_stock', '>', '0')
                     ->limit(20)
                     ->get();
             }

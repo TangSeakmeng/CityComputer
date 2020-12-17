@@ -55,7 +55,66 @@ class InvoiceDetailsController extends Controller
                 ->where('productssoldwithserialnumber.invoice_id', '=', $invoiceId)
                 ->get();
 
-            return view('backend.pages.sell_operation.invoiceDetails', compact('data', 'data2', 'data3'));
+            $data_4 = DB::table('productssoldwithserialnumber')
+                ->select(DB::raw('count(*) as num_of_serial_number'), 'product_id')
+                ->where('invoice_id', '=', $invoiceId)
+                ->groupBy(['invoice_id', 'product_id'])
+                ->get();
+
+            $arr_alertMessageToUser = [];
+            foreach ($data_4 as $item) {
+                $num_of_serial_number = $item->num_of_serial_number;
+                $productId = $item->product_id;
+
+                $sold_quantity = 0;
+                $productName = '';
+                foreach ($data2 as $jtem) {
+                    if($jtem->product_id == $productId) {
+                        $sold_quantity = $jtem->qty;
+                        $productName = $jtem->product_name;
+                    }
+                }
+
+                if($num_of_serial_number > $sold_quantity) {
+                    $str = "<div class=\"alert alert-danger\" role=\"alert\">
+                               {$productName} has {$num_of_serial_number} serial number(s) while it was sold {$sold_quantity} unit(s).
+                            </div>";
+                } else if ($num_of_serial_number < $sold_quantity) {
+                    $str = "<div class=\"alert alert-warning\" role=\"alert\">
+                               {$productName} has {$num_of_serial_number} serial number(s) while it was sold {$sold_quantity} unit(s).
+                            </div>";
+                } else {
+                    $str = "<div class=\"alert alert-success\" role=\"alert\">
+                               {$productName} has {$num_of_serial_number} serial number(s) while it was sold {$sold_quantity} unit(s).
+                            </div>";
+                }
+
+                array_push($arr_alertMessageToUser, $str);
+            }
+
+            $data_5 = DB::table('return_sold_products')
+                ->select('return_sold_products.return_id', 'return_sold_products.product_id',
+                    'products.name as product_name', 'return_sold_products.return_qty', 'return_sold_products.return_date')
+                ->join('products', 'products.id', '=', 'return_sold_products.product_id')
+                ->where('return_sold_products.invoice_id', '=', $invoiceId)
+                ->get();
+
+            return view('backend.pages.sell_operation.invoiceDetails', compact('data', 'data2', 'data3', 'arr_alertMessageToUser', 'data_5'));
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 401);
+        }
+    }
+
+    public static function getInvoiceDetailsByInvoiceId($id) {
+        try {
+            $data = DB::table('invoicedetails')
+                ->join('products', 'products.id', '=', 'invoicedetails.product_id')
+                ->select('invoicedetails.invoice_id', 'invoicedetails.product_id', 'products.barcode as product_barcode', 'products.name as product_name',
+                    'invoicedetails.qty', 'invoicedetails.price', 'invoicedetails.discount')
+                ->where('invoicedetails.invoice_id', '=', $id)
+                ->get();
+
+            return response()->json(['data' => $data], 201);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 401);
         }

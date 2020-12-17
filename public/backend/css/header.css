@@ -31,7 +31,7 @@
 .headerContainer .headerContainer_logo { }
 
 .headerContainer .headerContainer_logo img {
-    width: 200px;
+    height: 100px;
 }
 
 .headerContainer .headerContainer_navigation ul {

@@ -27,13 +27,6 @@ class ImportProductsController extends Controller
     public function getDataTableImportsData(Request $request)
     {
         if($request->ajax()) {
-//            $data = DB::table('imports')
-//                ->join('suppliers', 'suppliers.id', '=', 'imports.supplier_id')
-//                ->join('users', 'users.id', '=', 'imports.user_id')
-//                ->select('imports.id', 'imports.invoice_number', 'imports.import_date', 'imports.import_total',
-//                    'suppliers.name as supplier_name', 'users.name as username', 'imports.created_at')
-//                ->orderBy('imports.id', 'desc');
-
             $data = DB::table('viewimportproducts')->get();
 
             return DataTables::of($data)->addColumn('action', function ($data) {
@@ -191,10 +184,113 @@ class ImportProductsController extends Controller
                     'products.barcode as product_barcode', 'productserialnumbers.serial_number', 'productserialnumbers.status')
                 ->get();
 
-//            return redirect('admin/products/create')->with('success','Product created successfully!');
-            return view('backend.pages.import_products.viewImportDetails', compact('data', 'data_2', 'data_3'));
+            $data_4 = DB::table('productserialnumbers')
+                ->select(DB::raw('count(*) as num_of_serial_number'), 'product_id')
+                ->where('import_id', '=', $id)
+                ->groupBy(['import_id', 'product_id'])
+                ->get();
+
+            $arr_alertMessageToUser = [];
+            foreach ($data_4 as $item) {
+                $num_of_serial_number = $item->num_of_serial_number;
+                $productId = $item->product_id;
+
+                $imported_quantity = 0;
+                $productName = '';
+                foreach ($data_2 as $jtem) {
+                    if($jtem->product_id == $productId) {
+                        $imported_quantity = $jtem->import_quantity;
+                        $productName = $jtem->product_name;
+                    }
+                }
+
+                if($num_of_serial_number > $imported_quantity) {
+                    $str = "<div class=\"alert alert-danger\" role=\"alert\">
+                               {$productName} has {$num_of_serial_number} serial number(s) while it was imported {$imported_quantity} unit(s).
+                            </div>";
+                } else if ($num_of_serial_number < $imported_quantity) {
+                    $str = "<div class=\"alert alert-warning\" role=\"alert\">
+                               {$productName} has {$num_of_serial_number} serial number(s) while it was imported {$imported_quantity} unit(s).
+                            </div>";
+                } else {
+                    $str = "<div class=\"alert alert-success\" role=\"alert\">
+                               {$productName} has {$num_of_serial_number} serial number(s) while it was imported {$imported_quantity} unit(s).
+                            </div>";
+                }
+
+                array_push($arr_alertMessageToUser, $str);
+            }
+
+            $data_5 = DB::table('return_imported_products')
+                ->select('return_imported_products.return_id', 'return_imported_products.product_id', 'products.name as product_name', 'return_qty', 'return_date')
+                ->join('products', 'products.id', '=', 'return_imported_products.product_id')
+                ->where('import_id', '=', $id)
+                ->get();
+
+            return view('backend.pages.import_products.viewImportDetails', compact('data', 'data_2', 'data_3', 'arr_alertMessageToUser', 'data_5'));
         } catch (Exception $exception) {
-            return view('backend.pages.import_products.viewImportDetails', compact('exception'));
+            return $exception->getMessage();
+        }
+    }
+
+    public static function addImportProductSerialNumber_OnlyOne(Request $request) {
+        try {
+            $importId = $request->import_id;
+            $dateNow = date('Y-m-d H:i:s');
+
+            $result1 = DB::table('importdetails')
+                ->select('*')
+                ->where('import_id', '=', $request->import_id)
+                ->where('product_id', '=', $request->product_id)
+                ->first();
+
+            $result2 = DB::table('productserialnumbers')
+                ->select(DB::raw('count(*) as count_product_serial_number'))
+                ->where('import_id', '=', $request->import_id)
+                ->where('product_id', '=', $request->product_id)
+                ->first();
+
+            if($result2->count_product_serial_number >= $result1->import_quantity) {
+                return response()->json(['error' => "You have inserted {$result2->count_product_serial_number} serial number(s) which is equal to number of imported quantity ({$result1->import_quantity} units)."], 401);
+            }
+
+            DB::insert('insert into productserialnumbers (import_id, product_id, serial_number, note, status, created_at, updated_at)
+                        values (?,?,?,?,?,?,?) ', [$importId, $request->product_id, $request->serial_number, 'none', 'Available', $dateNow, $dateNow]);
+
+            return response()->json(['message' => 'Product SerialNumber are added successfully.'], 201);
+        } catch (QueryException $exception) {
+            if(strpos($exception->getMessage(), 'Duplicate entry') !== false){
+                return response()->json(['error' => 'This serial number of this product is already existed.'], 401);
+            }
+            else {
+                return response()->json(['error' => $exception->getMessage()], 401);
+            }
+        }
+    }
+
+    public static function  deleteImportProductSerialNumber_OnlyOne(Request $request) {
+        try {
+            DB::delete("delete from productserialnumbers where import_id={$request->import_id} and product_id={$request->product_id} and serial_number={$request->serial_number}");
+
+            return response()->json(['message' => 'Product SerialNumber are delete successfully.'], 201);
+        } catch (QueryException $exception) {
+            return response()->json(['error' => $exception->getMessage()], 401);
+        }
+    }
+
+    public function getImportDetailsByImportId($id)
+    {
+        try {
+            $data_2 = DB::table('importdetails')
+                ->join('products', 'products.id', '=', 'importdetails.product_id')
+                ->where('import_id', '=', $id)
+                ->select('products.id as product_id', 'products.name as product_name', 'products.barcode as product_barcode',
+                    'importdetails.import_quantity', 'importdetails.import_price')
+                ->get();
+
+            return response()->json(['data' => $data_2], 201);
+        } catch (Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 401);
         }
     }
 }

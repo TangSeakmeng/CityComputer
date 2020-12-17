@@ -49,7 +49,7 @@
                         <th scope="col">Qty</th>
                         <th scope="col">Price</th>
                         <th scope="col">Total</th>
-                        <th scope="col">Delete</th>
+                        <th scope="col">Actions</th>
                     </tr>
                     </thead>
                     <tbody id="tbodyAddToCardTable">
@@ -208,6 +208,8 @@
         let arr_resultSearchedProduct = [];
         let arr_addToCartProduct = [];
 
+        document.getElementById("txtKeyword").focus();
+
         function getDefaultProductsForSellPreview() {
             document.getElementById('containerProductsPreview').innerHTML = '';
 
@@ -265,6 +267,7 @@
                     if (xhr.status >= 200 && xhr.status < 300) {
                         const response = JSON.parse(xhr.responseText);
                         arr_resultSearchedProduct = response.data;
+
                         response.data.forEach((item, index) => {
                             let dom = document.createElement('div');
                             dom.setAttribute('class', 'productContainer');
@@ -276,6 +279,9 @@
                                 `;
                             document.getElementById('containerProductsPreview').appendChild(dom);
                         });
+
+                        document.getElementById("txtKeyword").value = '';
+                        document.getElementById("txtKeyword").focus();
                     }
                     else {
                         const response = JSON.parse(xhr.responseText);
@@ -320,6 +326,9 @@
                         document.querySelector('#messageModalTitle').innerHTML = 'Error';
                         document.querySelector('#messageModalBody').innerHTML = '<p>This product is out of unit in stock.</p>';
                         $('#messageModal').modal('show');
+
+                        document.getElementById("txtKeyword").value = '';
+                        document.getElementById("txtKeyword").focus();
                     }
                     else {
                         arr_addToCartProduct[index].qty = ++old_qty;
@@ -362,6 +371,9 @@
                                 `;
                                 document.getElementById('containerProductsPreview').appendChild(dom);
                             });
+
+                            document.getElementById("txtKeyword").value = '';
+                            document.getElementById("txtKeyword").focus();
 
                             if(response.data.length == 1) {
                                 addProductToCart2(response.data[0]);
@@ -612,7 +624,7 @@
                 });
 
                 document.querySelector('#totalCheckOutQuantityContainer').innerHTML = `Total Quantity: ${total_qty} Unit(s).`;
-                document.querySelector('#discountCheckOutContainer').innerHTML = `Discount: ${discount_amount} $.`;
+                document.querySelector('#discountCheckOutContainer').innerHTML = `Discount: ${roundNumber(discount_amount)} $.`;
                 document.querySelector('#subTotalCheckOutContainer_dollar').innerHTML = `Subtotal ($): ${roundNumber(subtotal - discount_amount)} $.`;
                 document.querySelector('#subTotalCheckOutContainer_riel').innerHTML = `Subtotal (R): ${totalRielExchangeIn} R.`;
             } catch(e) {

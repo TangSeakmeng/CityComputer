@@ -9,6 +9,7 @@ use App\Models\SaleStatus;
 use http\Message;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Psy\Util\Json;
 use File;
@@ -32,13 +33,16 @@ class ProductsController extends Controller
                 'categories.name as category_name', 'products.cost_of_sale', 'products.unit_in_stock', 'products.price',
                 'products.discount_price', 'products.image_path', 'sale_statuses.name as sale_name', 'products.published')
             ->orderBy('products.id', 'desc')
-            ->paginate(10);
+            ->paginate(25);
 
         return view('backend.pages.products.index', compact('data', 'saleStatuses'));
     }
 
     public function create()
     {
+        if(Auth::user()->is_admin != 1)
+            return redirect('/admin');
+
         $categories = Category::all();
         $brands = Brand::all();
         $saleStatuses = SaleStatus::all();
@@ -48,6 +52,11 @@ class ProductsController extends Controller
 
     public function store(Request $request)
     {
+        if(Auth::user()->is_admin != 1)
+            return redirect('/admin');
+
+        $file = "";
+
         try {
 //            $file = $request->file('fileImage')->store('uploaded_images/products','custom');
 //            $file = str_replace('uploaded_images/products/', ' ', $file);
@@ -69,12 +78,21 @@ class ProductsController extends Controller
 
             return response()->json(['message' => "Product is Created Successfully!"], 201);
         }catch (QueryException $exception) {
-            return response()->json(['message' => $exception->getMessage()], 401);
+            self::removeImage($file);
+
+            if(strpos($exception->getMessage(), 'Duplicate entry') == true) {
+                return response()->json(['message' => 'Barcode is already existed.'], 401);
+            } else {
+                return response()->json(['message' => $exception->getMessage()], 401);
+            }
         }
     }
 
     public function show($id)
     {
+        if(Auth::user()->is_admin != 1)
+            return redirect('/admin');
+
         $data = DB::table('products')
             ->join('categories', 'categories.id', '=', 'products.category_id')
             ->join('brands', 'brands.id', '=', 'products.brand_id')
@@ -91,6 +109,9 @@ class ProductsController extends Controller
 
     public function edit($id)
     {
+        if(Auth::user()->is_admin != 1)
+            return redirect('/admin');
+
         $categories = Category::all();
         $brands = Brand::all();
         $saleStatuses = SaleStatus::all();
@@ -115,6 +136,9 @@ class ProductsController extends Controller
 
     public function destroy($id)
     {
+        if(Auth::user()->is_admin != 1)
+            return;
+
         try {
             $product = DB::table('products')->where('id', $id)->first();
             $this->removeImage($product->image_path);
@@ -266,7 +290,8 @@ class ProductsController extends Controller
         }
     }
 
-    public static function getProductWithSerialNumberByProductId($id, $serialNumber) {
+    public static function getProductWithSerialNumberByProductId($id, $serialNumber)
+    {
         try {
             $data = DB::table('products')
                 ->join('categories', 'categories.id', '=', 'products.category_id')

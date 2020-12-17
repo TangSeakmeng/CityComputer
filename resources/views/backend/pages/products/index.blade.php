@@ -9,9 +9,17 @@
         <div class="productsHeader">
             <h1 class="display-4">Products</h1>
 
-            <a href="/admin/products/create">
-                <button class="btn btn-primary mt-2">Add Product</button>
-            </a>
+            <div>
+                <a href="/admin/products/create">
+                    <button class="btn btn-primary mt-2">Add Product</button>
+                </a>
+
+                <a href="/admin/report/products">
+                    <button type="button" class="btn btn-success mt-2">
+                        Print Stock Report
+                    </button>
+                </a>
+            </div>
         </div>
 
         <div class="formSearchProduct mt-4">
@@ -20,7 +28,7 @@
 
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="inputEmail4">Keyword</label>
+                        <label for="txtKeyword">Keyword</label>
                         <input
                             type="text"
                             class="form-control"
@@ -187,6 +195,8 @@
 @section('link_js')
     <script>
         let productIdForDelete = 0;
+
+        document.getElementById("txtKeyword").focus();
 
         function deleteProduct(productId) {
             productIdForDelete = productId;

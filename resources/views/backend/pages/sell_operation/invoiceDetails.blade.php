@@ -9,9 +9,13 @@
 @section('content')
     <div id="transactionContainer">
         <div class="transactionHeader">
-            <h1 class="display-4">View Sell Transaction</h1>
+            <div class="d-flex align-items-center justify-content-between">
+                <h1 class="display-4">View Sell Transaction</h1>
+            </div>
             <div>
-                <a href="/admin/invoices/"><button class="btn btn-primary">Sell Transactions</button></a>
+                <a href="/admin/invoices/"><button class="btn btn-warning">Sell Transactions</button></a>
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#returnProductModal">Return Product</button>
+                <a href="/admin/invoice/{{ $data->id }}"><button class="btn btn-success">Print Invoice</button></a>
                 @if($data->subtotal > ($data->money_received_in_dollar + ($data->money_received_in_riel / $data->exchange_rate_in)))
                     <button class="btn btn-warning" onclick="openPayMoreDialog()">Pay More</button>
                 @endif
@@ -64,25 +68,35 @@
             </tr>
             </thead>
             <tbody>
+            @if(sizeof($data2) == 0)
+                <tr>
+                    <td colspan="6" style="text-align: center">No Row(s).</td>
+                </tr>
+            @endif
+
             @foreach($data2 as $item)
                 <tr>
                     <th scope="row">{{ $item->product_id }}</th>
                     <td>{{ $item->product_barcode }}</td>
                     <td>{{ $item->product_name }}</td>
-                    <td>{{ $item->qty }}</td>
-                    <td>{{ $item->price }}</td>
-                    <td>{{ $item->discount }}</td>
+                    <td>{{ $item->qty }} unit(s)</td>
+                    <td>{{ $item->price }}$</td>
+                    <td>{{ $item->discount }}%</td>
                 </tr>
             @endforeach
             </tbody>
         </table>
 
-        <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-4" style="border-top: 2px solid grey; padding-top: 20px">
             <h1 class="display-4">Product Serial Number</h1>
             <button class="btn btn-success" onclick="btnShowProductSerialNumberDialog()">
                 Add Serial Number
             </button>
         </div>
+
+        @foreach($arr_alertMessageToUser as $item)
+            {!!html_entity_decode($item)!!}
+        @endforeach
 
         <table class="table">
             <thead class="thead-dark">
@@ -97,6 +111,12 @@
                 </tr>
             </thead>
             <tbody>
+            @if(sizeof($data3) == 0)
+                <tr>
+                    <td colspan="6" style="text-align: center">No Row(s).</td>
+                </tr>
+            @endif
+
             @foreach($data3 as $item)
                 <tr>
                     <th scope="row">{{ $item->product_id }}</th>
@@ -109,11 +129,49 @@
                         <button type="button" class="btn btn-danger" onclick="deleteProductSoldSerialNumber({{ $item->id }})">
                             x
                         </button>
+                        <button type="button" class="btn btn-success">
+                            Return
+                        </button>
                     </td>
                 </tr>
             @endforeach
             </tbody>
         </table>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-4" style="border-top: 2px solid grey; padding-top: 20px">
+            <h1 class="display-4">Return History</h1>
+        </div>
+
+        <div>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Return ID</th>
+                    <th scope="col">Product ID</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Return Quantity</th>
+                    <th scope="col">Return Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @if(sizeof($data_5) == 0)
+                        <tr>
+                            <td colspan="5" style="text-align: center">No Row(s).</td>
+                        </tr>
+                    @endif
+
+                    @foreach($data_5 as $item)
+                        <tr>
+                            <th scope="row">{{ $item->return_id }}</th>
+                            <th>{{ $item->product_id }}</th>
+                            <td>{{ $item->product_name }}</td>
+                            <td>{{ $item->return_qty }}</td>
+                            <td>{{ $item->return_date }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -230,6 +288,62 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
                     <button type="button" class="btn btn-primary" onclick="btnDeleteSoldProductSerialNumber()">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="returnProductModal" tabindex="-1" role="dialog" aria-labelledby="returnProductLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="returnProductLabel">Return Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success" role="alert" id="alertReturnProductSuccessMessage" style="display: none"></div>
+                    <div class="alert alert-danger" role="alert" id="alertReturnProductErrorMessage" style="display: none"></div>
+
+                    <form id="formAddReturnProduct">
+                        <div class="form-group">
+                            <label for="selectProductName">Product Name</label>
+                            <select class="form-control" id="selectProductName_ForReturn">
+                                @foreach($data2 as $key=>$item)
+                                    <option value="{{ $item->product_id }}">
+                                        {{ $item->product_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtReturnQuantity">Return Quantity</label>
+                            <input type="number" class="form-control" id="txtReturnQuantity" placeholder="enter return quantity">
+                        </div>
+                    </form>
+
+                    <button type="button" class="btn btn-primary w-100" onclick="btnAddReturnProduct()">Add</button>
+
+                    <table class="table mt-3">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbodyReturnProducts">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitReturnProductsOperation()">Submit</button>
                 </div>
             </div>
         </div>
@@ -450,6 +564,154 @@
                 };
 
                 xhr.open("POST", `/admin/invoicedetails/pay_more`, true);
+                xhr.setRequestHeader('x-csrf-token', '{{csrf_token()}}');
+                xhr.send(formData);
+            } catch (e) {
+                alert(e)
+            }
+        }
+
+        let arr_returnProduct = [];
+        let arr_soldProduct = [];
+
+        function getInvoiceDetailsByInvoiceId() {
+            try {
+                let invoice_id = document.querySelector('#txtInvoiceID').value;
+
+                let xhr = new XMLHttpRequest();
+
+                xhr.onload = (format, data) => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        let response = JSON.parse(xhr.responseText);
+                        arr_soldProduct = response.data;
+
+                        console.log(arr_soldProduct);
+                    }
+                    else {
+                        let response = JSON.parse(xhr.responseText);
+                        alert(response.error);
+                    }
+                };
+
+                xhr.open("GET", `/admin/invoices/getInvoiceDetails/` + invoice_id);
+                xhr.send();
+            } catch (e) {
+                alert(e)
+            }
+        }
+
+        getInvoiceDetailsByInvoiceId();
+
+        function btnAddReturnProduct() {
+            document.getElementById('alertReturnProductErrorMessage').style.display = 'none';
+
+            try {
+                let product_id = document.getElementById('selectProductName_ForReturn').value;
+                let return_qty = parseInt(document.querySelector('#txtReturnQuantity').value);
+                let productIndex = arr_soldProduct.findIndex((item) => item.product_id == product_id);
+                let product_name = arr_soldProduct[productIndex].product_name;
+                let sold_qty = parseInt(arr_soldProduct[productIndex].qty + "");
+
+                if(document.querySelector('#txtReturnQuantity').value == '') {
+                    document.querySelector('#alertReturnProductErrorMessage').innerHTML = 'Return Quantity can not be empty.';
+                    document.getElementById('alertReturnProductErrorMessage').style.display = 'block';
+                    document.querySelector('#txtReturnQuantity').value = 1;
+                    return;
+                }
+
+                if(return_qty <= 0) {
+                    document.querySelector('#alertReturnProductErrorMessage').innerHTML = 'Return Quantity can not be negative or equal zero.';
+                    document.getElementById('alertReturnProductErrorMessage').style.display = 'block';
+                    document.querySelector('#txtReturnQuantity').value = 1;
+                    return;
+                }
+
+                let index = arr_returnProduct.findIndex((item) => item.product_id == product_id);
+
+                if(index >= 0) {
+                    let old_qty = arr_returnProduct[index].return_qty;
+
+                    if(old_qty + return_qty > sold_qty) {
+                        document.querySelector('#alertReturnProductErrorMessage').innerHTML = 'Return Quantity can not greater than number of sold quantity.';
+                        document.getElementById('alertReturnProductErrorMessage').style.display = 'block';
+                        document.querySelector('#txtReturnQuantity').value = 1;
+                        return;
+                    } else {
+                        arr_returnProduct[index].return_qty = old_qty + return_qty;
+                    }
+                } else {
+                    if(return_qty > sold_qty) {
+                        document.querySelector('#alertReturnProductErrorMessage').innerHTML = 'Return Quantity can not greater than number of sold quantity.';
+                        document.getElementById('alertReturnProductErrorMessage').style.display = 'block';
+                        return;
+                    }
+
+                    arr_returnProduct.push({ product_id, product_name, sold_qty, return_qty });
+                }
+
+                renderArrReturnProduct();
+            } catch (e) {
+                alert(e);
+            }
+        }
+
+        function deleteReturnProduct(productIndex) {
+            arr_returnProduct.splice(productIndex, 1);
+            renderArrReturnProduct();
+        }
+
+        function renderArrReturnProduct() {
+            try {
+                document.querySelector('#tbodyReturnProducts').innerHTML = '';
+
+                arr_returnProduct.forEach((item, index) => {
+                    let dom = document.createElement('tr');
+
+                    dom.innerHTML = `
+                        <th scope="row">${index + 1}</th>
+                        <td>${item.product_name}</td>
+                        <td>${item.return_qty}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="deleteReturnProduct(${index})">x</button>
+                        </td>
+                    `;
+
+                    document.querySelector('#tbodyReturnProducts').appendChild(dom);
+                })
+            } catch (e) {
+                alert(e);
+            }
+        }
+
+        document.querySelector('#formAddReturnProduct').addEventListener('submit', (e) => {
+            e.preventDefault();
+        })
+
+        function submitReturnProductsOperation() {
+            try {
+                if(arr_returnProduct == [])
+                    return;
+
+                let invoice_id = document.querySelector('#txtInvoiceID').value;
+
+                let xhr = new XMLHttpRequest();
+                let formData = new FormData();
+
+                formData.append("invoice_id", invoice_id);
+                formData.append("data", JSON.stringify(arr_returnProduct));
+
+                xhr.onload = (format, data) => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        let route = window.location.pathname + window.location.search;
+                        window.location = route;
+                    }
+                    else {
+                        let response = JSON.parse(xhr.responseText);
+                        alert(response.message);
+                    }
+                };
+
+                xhr.open("POST", `/admin/returnSoldProduct/`, true);
                 xhr.setRequestHeader('x-csrf-token', '{{csrf_token()}}');
                 xhr.send(formData);
             } catch (e) {

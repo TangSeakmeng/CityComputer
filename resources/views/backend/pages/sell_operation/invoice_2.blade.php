@@ -95,25 +95,25 @@
                     <td style="width: 2%;">{{ $key + 1 }}</td>
                     <td style="text-align: left;">{{ $item->name }}</td>
                     <td style="width: 10%;">{{ $item->qty }}</td>
-                    <td style="width: 18%;">{{ $item->price }}$</td>
-                    <td style="width: 18%;">{{ $item->qty * $item->price }}$</td>
+                    <td style="width: 18%;">{{ $item->price - ($item->price * ($item->discount / 100)) }}$</td>
+                    <td style="width: 18%;">{{ ($item->qty * $item->price) - (($item->qty * $item->price) * ($item->discount / 100)) }}$</td>
                 </tr>
             @endforeach
             <tr>
                 <td colspan="3" rowspan="3"></td>
                 <td style="font-weight: 800; text-align: right;">
                     <span class="khmerFont">(សរុប)</span>&nbsp;Total:</td>
-                <td>{{ $data1->subtotal }}$</td>​​​​​​
+                <td>{{ round($data1->subtotal * 1000) / 1000 }}$</td>​​​​​​
             </tr>​​​​
             <tr>
                 <td style="font-weight: 800; text-align: right;">
                     <span class="khmerFont">(អោយមុន)</span>&nbsp;Deposit:</td>
-                <td>{{ $data1->money_received_in_dollar + ($data1->money_received_in_riel / $data1->exchange_rate_in) }}$</td>​​​​
+                <td>{{ round(($data1->money_received_in_dollar + ($data1->money_received_in_riel / $data1->exchange_rate_in)) * 1000) / 1000 }}$</td>​​​​
             </tr>
             <tr>
                 <td style="font-weight: 800; text-align: right;">
                     <span class="khmerFont">(នៅខ្វះ)</span>&nbsp;Balance:</td>
-                <td>{{ $data1->subtotal - ($data1->money_received_in_dollar + ($data1->money_received_in_riel / $data1->exchange_rate_in)) }}$</td>
+                <td>{{ round(($data1->subtotal - ($data1->money_received_in_dollar + ($data1->money_received_in_riel / $data1->exchange_rate_in))) * 1000) / 1000 }}$</td>
             </tr>
             </tbody>
         </table>

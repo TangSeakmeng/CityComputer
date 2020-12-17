@@ -3,41 +3,29 @@
 <div class="navSidebarContainer">
     <ul>
         <li>
-            <div class="navElement">
-                <span>PC Parts</span>
-                <span><img src="{{ url('assets/icons/right-arrow.png') }}"></span>
-
-                <div class="subNavElements">
-                    <ul>
-                        <li class="subNavElement"><p>Motherboard</p></li>
-                        <li class="subNavElement"><p>CPU</p></li>
-                        <li class="subNavElement"><p>Graphic Card</p></li>
-                        <li class="subNavElement"><p>RAM</p></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="navElement">
-                <span>Laptop</span>
-                <span><img src="{{ url('assets/icons/right-arrow.png') }}"></span>
-
-                <div class="subNavElements">
-                    <ul>
-
-                    </ul>
-                </div>
-            </div>
-
-            <div class="navElement">
-                <span>Printer</span>
-                <span><img src="{{ url('assets/icons/right-arrow.png') }}"></span>
-
-                <div class="subNavElements">
-                    <ul>
-
-                    </ul>
-                </div>
-            </div>
+            @foreach($result2 as $item)
+                @if($item->parent_id == 1 && $item->category_id != 1)
+                    <div class="navElement">
+                        <a href="/productsByCategory/{{$item->category_id}}">
+                            <span>
+                                {{ $item->category_name }}
+                            </span>
+                        </a>
+                        <span><img src="{{ url('assets/icons/right-arrow.png') }}"></span>
+                        <div class="subNavElements">
+                            <ul>
+                                @foreach($result2 as $item2)
+                                    @if($item2->parent_id == $item->category_id)
+                                        <a href="/productsByCategory/{{$item2->category_id}}">
+                                            <li class="subNavElement"><p>{{ $item2->category_name }}</p></li>
+                                        </a>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
         </li>
     </ul>
 </div>

@@ -1,0 +1,22 @@
+.contactUsContainer {
+    display: flex;
+    width: 70%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #E8E8E8;
+}
+
+.contactUsContainer div {
+    width: 50%;
+}
+
+.contactUsContainer .leftSideContainer h1 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+@media screen and (max-width: 1750px){
+    .contactUsContainer {
+        width: 90%;
+    }
+}

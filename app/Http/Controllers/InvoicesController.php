@@ -57,7 +57,21 @@ class InvoicesController extends Controller
     }
 
     public static function index() {
-        return view('backend.pages.sell_operation.sellTransactions');
+        $data2 = DB::table('invoices')
+            ->join('users', 'users.id', '=', 'invoices.user_id')
+            ->select('invoices.id', 'invoices.invoice_number', 'invoices.invoice_date', 'invoices.customer_name',
+                'invoices.customer_contact', 'invoices.discount', 'invoices.subtotal', 'users.name as username', 'invoices.exchange_rate_in',
+                'invoices.exchange_rate_out', 'invoices.payment_method', 'invoices.money_received_in_dollar', 'invoices.money_received_in_riel')
+            ->where(DB::raw('convert(invoices.invoice_date, char)'), 'like', '%' . date('Y-m-d') . '%')
+            ->orderBy('invoices.id', 'desc')
+            ->get();
+
+        $data3 = DB::table('invoices')
+            ->select(DB::raw('sum(subtotal) as sum_invoices_total'))
+            ->where(DB::raw('convert(invoices.invoice_date, char)'), 'like', '%' . date('Y-m-d') . '%')
+            ->first();
+
+        return view('backend.pages.sell_operation.sellTransactions', compact('data2', 'data3'));
     }
 
     public static function getDataTableInvoicesData(Request $request) {

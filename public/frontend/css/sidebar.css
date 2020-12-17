@@ -18,6 +18,14 @@
     align-items: center;
 }
 
+.navSidebarContainer ul li .navElement span {
+    color: black;
+}
+
+.navSidebarContainer ul li .navElement a:hover {
+    text-decoration: none;
+}
+
 .navSidebarContainer ul li .navElement span img {
     width: 8px;
 }
@@ -40,11 +48,16 @@
 }
 
 .navSidebarContainer ul li .navElement .subNavElements .subNavElement p {
+    color: black;
     margin: 0;
 }
 
 .navSidebarContainer ul li .navElement .subNavElements .subNavElement:hover {
     background-color: #b9b9b9;
+    color: white;
+}
+
+.navSidebarContainer ul li .navElement .subNavElements .subNavElement:hover p {
     color: white;
 }
 

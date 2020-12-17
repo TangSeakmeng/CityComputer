@@ -11,3 +11,9 @@
 #layout_Sidebar_ImageSlideShow_Container #layout_ImageSlideShow_Container {
     width: calc(100% - 200px);
 }
+
+@media screen and (max-width: 1750px) {
+    #layout_Sidebar_ImageSlideShow_Container {
+        padding: 0px 5% !important;
+    }
+}

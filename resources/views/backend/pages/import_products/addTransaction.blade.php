@@ -132,7 +132,7 @@
     </div>
 
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Add Product</h5>
@@ -142,19 +142,19 @@
                 </div>
                 <div class="modal-body">
                     <div class="modalAddProductContainer">
-                        @if ($notification = Session::get('success'))
-                            <div class="alert alert-success alert-block mt-4">
-                                <button type="button" class="close" data-dismiss="alert">×</button>
-                                <strong>{{ $notification }}</strong>
-                            </div>
-                        @endif
+                        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" id="alertSuccessful" style="display: none">
+                            <strong>Successful!</strong> Product is added.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
 
-                        @if ($notification = Session::get('error'))
-                            <div class="alert alert-danger alert-block mt-4">
-                                <button type="button" class="close" data-dismiss="alert">×</button>
-                                <strong>{{ $notification }}</strong>
-                            </div>
-                        @endif
+                        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" id="alertWarning" style="display: none">
+                            <strong>Error!</strong> <span id="alertWarning_text"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
 
                         <form id="frmAddProduct">
                             @csrf
@@ -344,6 +344,17 @@
         document.querySelector('#frmAddProduct').addEventListener('submit', (e) => {
             e.preventDefault();
 
+            document.getElementById('alertSuccessful').style.display = 'none';
+            document.getElementById('alertWarning').style.display = 'none';
+
+            let description = CKEDITOR.instances['txtNewDescription'].getData();
+
+            if(description == '') {
+                document.getElementById('alertWarning').style.display = 'block';
+                document.getElementById('alertWarning_text').innerHTML = 'Please fill the product description.';
+                return;
+            }
+
             let xhr = new XMLHttpRequest();
             let formData = new FormData();
 
@@ -351,7 +362,7 @@
             let name = document.querySelector("#txtNewName").value;
             let category_id = document.querySelector("#selectNewCategory").value;
             let brand_id = document.querySelector("#selectNewBrand").value;
-            let description = CKEDITOR.instances['txtNewDescription'].getData();
+
             let cost_of_sale = document.querySelector("#txtNewCostOfSale").value;
             let fileImage = document.querySelector("#thumbnail").files[0];
 
@@ -368,14 +379,16 @@
 
             xhr.onload = (format, data) => {
                 if (xhr.status >= 200 && xhr.status < 300) {
-                    const response = JSON.parse(xhr.responseText);
                     document.getElementById("frmAddProduct").reset();
                     document.getElementById("img_thumbnail").setAttribute('src', '{{ asset('images/no_image_available.png') }}');
                     CKEDITOR.instances['txtNewDescription'].setData(' ');
+
+                    document.getElementById('alertSuccessful').style.display = 'block';
                 }
                 else {
                     const response = JSON.parse(xhr.responseText);
-                    alert(response.message);
+                    document.getElementById('alertWarning').style.display = 'block';
+                    document.getElementById('alertWarning_text').innerHTML = response.message;
                 }
             };
 

@@ -24,6 +24,20 @@
             </div>
         @endif
 
+        <div class="alert alert-success alert-dismissible fade show mt-4 mb-4" role="alert" id="alertSuccessful" style="display: none">
+            <strong>Successful!</strong> Product is added.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="alert alert-danger alert-dismissible fade show mt-4 mb-4" role="alert" id="alertWarning" style="display: none">
+            <strong>Error!</strong> <span id="alertWarning_text"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
         <form class="mt-4" id="frmAddProduct">
             @csrf
 
@@ -146,6 +160,9 @@
         });
 
         document.querySelector('#frmAddProduct').addEventListener('submit', (e) => {
+            document.getElementById('alertSuccessful').style.display = 'none';
+            document.getElementById('alertWarning').style.display = 'none';
+
             e.preventDefault();
 
             let xhr = new XMLHttpRequest();
@@ -175,15 +192,19 @@
 
             xhr.onload = (format, data) => {
                 if (xhr.status >= 200 && xhr.status < 300) {
-                    $('#messageModal').modal('show');
-                    const response = JSON.parse(xhr.responseText);
+                    // $('#messageModal').modal('show');
+                    // const response = JSON.parse(xhr.responseText);
+
                     document.getElementById("frmAddProduct").reset();
                     document.getElementById("img_thumbnail").setAttribute('src', '{{ asset('images/no_image_available.png') }}');
                     CKEDITOR.instances['txtDescription'].setData(' ');
+
+                    document.getElementById('alertSuccessful').style.display = 'block';
                 }
                 else {
                     const response = JSON.parse(xhr.responseText);
-                    alert(response.message);
+                    document.getElementById('alertWarning').style.display = 'block';
+                    document.getElementById('alertWarning_text').innerHTML = response.message;
                 }
             };
 

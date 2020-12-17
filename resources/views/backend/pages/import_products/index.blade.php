@@ -14,18 +14,54 @@
             </a>
         </div>
 
+{{--        <table class="table mt-4">--}}
+{{--            <thead class="thead-dark">--}}
+{{--                <tr>--}}
+{{--                    <th>Import ID</th>--}}
+{{--                    <th>Invoice Number</th>--}}
+{{--                    <th>Import Date</th>--}}
+{{--                    <th>Import Total</th>--}}
+{{--                    <th>Supplier</th>--}}
+{{--                    <th>Managed By</th>--}}
+{{--                    <th>Created At</th>--}}
+{{--                    <th>Action</th>--}}
+{{--                </tr>--}}
+{{--            </thead>--}}
+{{--            <tbody>--}}
+{{--                @foreach($data2 as $item)--}}
+{{--                    <tr>--}}
+{{--                        <td>{{ $item->id }}</td>--}}
+{{--                        <td>{{ $item->invoice_number }}</td>--}}
+{{--                        <td>{{ $item->import_date }}</td>--}}
+{{--                        <td>{{ $item->import_total }}</td>--}}
+{{--                        <td>{{ $item->supplier_name }}</td>--}}
+{{--                        <td>{{ $item->username }}</td>--}}
+{{--                        <td>{{ $item->created_at }}</td>--}}
+{{--                        <td>--}}
+{{--                            <a href='/admin/import_products/getImportDetailsDataByImportId/{{ $item->id }}'>--}}
+{{--                                <button class='btn btn-success'>View</button>--}}
+{{--                            </a>--}}
+{{--                        </td>--}}
+{{--                    </tr>--}}
+{{--                @endforeach--}}
+{{--            </tbody>--}}
+{{--        </table>--}}
+
+{{--        <h1 class="display-4 mt-4" style="font-size: 40px;">All Transaction</h1>--}}
+
         <div class="transactionContent mt-4">
-            <table id="transactionTable" class="table">
-{{--                table-bordered table-striped--}}
+            <table id="transactionTable" class="table" data-page-length='50'>
                 <thead class="thead-dark">
-                    <th>Import ID</th>
-                    <th>Invoice Number</th>
-                    <th>Import Date</th>
-                    <th>Import Total</th>
-                    <th>Supplier</th>
-                    <th>Managed By</th>
-                    <th>Created At</th>
-                    <th>Action</th>
+                    <tr>
+                        <th>Import ID</th>
+                        <th>Invoice Number</th>
+                        <th>Import Date</th>
+                        <th>Import Total</th>
+                        <th>Supplier</th>
+                        <th>Managed By</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
             </table>
         </div>
@@ -52,7 +88,8 @@
                 "columns": [
                     {
                         "data": 'id',
-                        "name": 'id'
+                        "name": 'id',
+                        orderable: false
                     },
                     {
                         "data": 'invoice_number',

@@ -14,8 +14,90 @@
             </a>
         </div>
 
+
+        <table class="table mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Invoice ID</th>
+                    <th>Invoice Number</th>
+                    <th>Invoice Date</th>
+                    <th>Customer Name</th>
+                    <th>Contact</th>
+                    <th>Discount</th>
+                    <th>Subtotal</th>
+                    <th>Managed By</th>
+                    <th>Paid Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    foreach ($data2 as $item) {
+                        $result1 = $item->money_received_in_dollar + ($item->money_received_in_riel / $item->exchange_rate_in);
+                        $result2 = $item->subtotal <= $result1;
+
+                        if($result2) {
+                             echo "
+                                <tr>
+                                    <td>{$item->id}</td>
+                                    <td>{$item->invoice_number}</td>
+                                    <td>{$item->invoice_date}</td>
+                                    <td>{$item->customer_name}</td>
+                                    <td>{$item->customer_contact}</td>
+                                    <td>{$item->discount}</td>
+                                    <td>{$item->subtotal}</td>
+                                    <td>{$item->username}</td>
+                                    <td>
+                                        <div style='text-align: center'>
+                                            <img src='/assets/icons/check.png' style='width: 30px' />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href='/admin/invoicedetails/{$item->id}'>
+                                            <button class='btn btn-success'>View</button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            ";
+                        }
+                        else {
+                            echo "
+                                <tr>
+                                    <td>{$item->id}</td>
+                                    <td>{$item->invoice_number}</td>
+                                    <td>{$item->invoice_date}</td>
+                                    <td>{$item->customer_name}</td>
+                                    <td>{$item->customer_contact}</td>
+                                    <td>{$item->discount}$</td>
+                                    <td>{$item->subtotal}$</td>
+                                    <td>{$item->username}</td>
+                                    <td>
+                                        <div style='text-align: center'>
+                                            <img src='/assets/icons/close.png' style='width: 30px' />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href='/admin/invoicedetails/{$item->id}'>
+                                            <button class='btn btn-success'>View</button>
+                                        </a>
+                                    </td>
+                                </tr>
+                        "   ;
+                        }
+                    }
+                @endphp
+
+            <tr>
+                <td colspan="6" style="text-align: right">Total:</td>
+                <td colspan="4">{{ $data3->sum_invoices_total == "" ? "0" : $data3->sum_invoices_total }}$</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h1 class="display-4 mt-4" style="font-size: 40px;">All Transaction</h1>
+
         <div class="transactionContent mt-4">
-            <table id="transactionTable" class="table">
+            <table id="transactionTable" class="table" data-page-length='50'>
                 <thead class="thead-dark">
                 <th>Invoice ID</th>
                 <th>Invoice Number</th>
