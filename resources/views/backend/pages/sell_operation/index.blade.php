@@ -136,11 +136,24 @@
                         <div class="form-row" class="customerPaymentContainer" style="padding-bottom: 20px; border-bottom: 1px solid black">
                             <div class="form-group col-md-6">
                                 <label for="txtExchangeRateIn">Exchange Rate In</label>
-                                <input type="number" class="form-control" id="txtExchangeRateIn" placeholder="enter exchange rate in" value="0">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="txtExchangeRateIn"
+                                    placeholder="enter exchange rate in"
+                                    value="0"
+                                    readonly
+                                    onchange="inputConstraintCannotBeNegative('txtExchangeRateIn', 0)">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="txtExchangeRateOut">Exchange Rate Out</label>
-                                <input type="number" class="form-control" id="txtExchangeRateOut" placeholder="enter exchange rate out" value="0">
+                                <input type="number"
+                                       class="form-control"
+                                       id="txtExchangeRateOut"
+                                       placeholder="enter exchange rate out"
+                                       value="0"
+                                       readonly
+                                       onchange="inputConstraintCannotBeNegative('txtExchangeRateOut', 0)">
                             </div>
                         </div>
 
@@ -509,7 +522,12 @@
 
         function productInCartPriceChanged(productIndex) {
             let updated_price = document.querySelector(`#productInCartPrice${productIndex}`).value;
-            updated_price = updated_price == '' ? 0 : updated_price;
+
+            if(updated_price == "" || updated_price < 0){
+                document.querySelector(`#productInCartPrice${productIndex}`).value = 0;
+                updated_price = 0;
+            }
+
             arr_addToCartProduct[productIndex].price = parseFloat(updated_price);
             renderArr_addToCartProductToTable()
         }
@@ -579,11 +597,12 @@
             let discount_pct = document.querySelector(`#productInCartDiscount${productIndex}`).value;
 
             if(discount_pct < 0) {
-                document.querySelector('#messageModalTitle').innerHTML = 'Error';
-                document.querySelector('#messageModalBody').innerHTML = '<p>This product is out of unit in stock.</p>';
-                $('#messageModal').modal('show');
+                // document.querySelector('#messageModalTitle').innerHTML = 'Error';
+                // document.querySelector('#messageModalBody').innerHTML = '<p>The discount percentage can not lower than 0.</p>';
+                // $('#messageModal').modal('show');
 
                 document.querySelector(`#productInCartDiscount${productIndex}`).value = 0;
+                arr_addToCartProduct[productIndex].discount = 0;
             } else {
                 arr_addToCartProduct[productIndex].discount = discount_pct;
             }
@@ -718,9 +737,9 @@
 
 
         function txtMoneyReceivedInDollarChanged() {
-            let dollars = parseFloat(document.querySelector('#txtMoneyReceivedInDollar').value);
+            let dollars = document.querySelector('#txtMoneyReceivedInDollar').value;
 
-            if(dollars < 0) {
+            if(parseFloat(dollars) < 0 || dollars == "") {
                 document.querySelector('#txtMoneyReceivedInDollar').value = 0;
                 return;
             }
@@ -729,9 +748,9 @@
         }
 
         function txtMoneyReceivedInRielChanged() {
-            let dollars = parseFloat(document.querySelector('#txtMoneyReceivedInRiel').value);
+            let dollars = document.querySelector('#txtMoneyReceivedInRiel').value;
 
-            if(dollars < 0) {
+            if(parseFloat(dollars) < 0 || dollars == "") {
                 document.querySelector('#txtMoneyReceivedInRiel').value = 0;
                 return;
             }
@@ -765,7 +784,7 @@
         }
 
         function roundNumber(number) {
-            return Math.round(number * 1000) / 1000;
+            return parseFloat(number).toFixed(2);
         }
 
         function convertNumberToKHCurrency(number) {
@@ -780,6 +799,20 @@
                 style: 'currency',
                 currency: 'usd',
             });
+        }
+
+        function inputConstraintCannotBeNegative(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value < 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
+        }
+
+        function inputConstraintCannotBeNegativeAndZero(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value <= 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
         }
     </script>
 @endsection

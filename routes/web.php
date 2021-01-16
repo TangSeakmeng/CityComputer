@@ -78,16 +78,17 @@ Route::post('/admin/import_products/addImportDetails', [ImportProductsController
 Route::post('/admin/import_products/addImportProductSerialNumbers', [ImportProductsController::class, 'addImportProductSerialNumbers']);
 Route::post('/admin/import_products/addImportProductSerialNumber_OnlyOne', [ImportProductsController::class, 'addImportProductSerialNumber_OnlyOne']);
 Route::post('/admin/import_products/deleteImportProductSerialNumber_OnlyOne', [ImportProductsController::class, 'deleteImportProductSerialNumber_OnlyOne']);
+Route::post('/admin/import_products/deleteAndReturnImportProductSerialNumber_OnlyOne', [ImportProductsController::class, 'deleteAndReturnImportProductSerialNumber_OnlyOne']);
 
 Route::get('/admin/serial_number/getDataByProductIdAndSerialNumber/{serial_number}/{id}', [ProductSerialNumberController::class, 'getDataByProductIdAndSerialNumber']);
 Route::get('/admin/delete_sold_product_serial_number/{id}', [ProductSerialNumberController::class, 'deleteSoldProductSerialNumber']);
+Route::post('/admin/delete_and_return_sold_product_serial_number', [ProductSerialNumberController::class, 'deleteAndReturnSoldProductSerialNumber']);
 Route::post('/admin/serial_number/updateNote/{serial_number}/{id}', [ProductSerialNumberController::class, 'updateNoteByProductIdAndSerialNumber']);
 Route::post('/admin/add_sold_product_serial_number/', [ProductSerialNumberController::class, 'addSoldProductSerialNumber']);
 
 Route::get('/admin/sell_operation/', [SellOperationController::class, 'index']);
 Route::get('/admin/getDefaultProductsForSellPreview/', [SellOperationController::class, 'getDefaultProductsForSellPreview']);
 Route::post('/admin/searchProductsForSellPreviewByOption/', [SellOperationController::class, 'searchProductsForSellPreviewByOption']);
-
 
 Route::get('/admin/invoices', [InvoicesController::class, 'index']);
 Route::get('/admin/invoice/{invoiceId}', [InvoicesController::class, 'printInvoice']);

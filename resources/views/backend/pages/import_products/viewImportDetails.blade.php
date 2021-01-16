@@ -95,11 +95,14 @@
                             <td>{{ $item->serial_number }}</td>
                             <td>{{ $item->status}}</td>
                             <td>
-                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal" onclick="btnViewNote({{ $item->product_id }}, '{{ $item->serial_number }}')">
-                                    View Note
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal" onclick="btnViewNote({{ $item->product_id }}, '{{ $item->serial_number }}')">
+                                    Note
                                 </button>
                                 <button type="button" class="btn btn-danger" onclick="deleteProductSerialNumber({{ $item->product_id }}, '{{ $item->serial_number }}')">
                                     Delete
+                                </button>
+                                <button type="button" class="btn btn-success" onclick="returnProductImportedSerialNumber({{ $item->product_id }}, '{{ $item->serial_number }}')">
+                                    Return
                                 </button>
                             </td>
                         </tr>
@@ -258,7 +261,7 @@
 
                         <div class="form-group">
                             <label for="txtReturnQuantity">Return Quantity</label>
-                            <input type="number" class="form-control" id="txtReturnQuantity" placeholder="enter return quantity">
+                            <input type="number" class="form-control" id="txtReturnQuantity" placeholder="enter return quantity" value="1" onchange="inputConstraintCannotBeNegativeAndZero('txtReturnQuantity', 1)">
                         </div>
                     </form>
 
@@ -592,12 +595,64 @@
                     }
                 };
 
-                xhr.open("POST", `/admin/returnImportedProduct/`, true);
+                xhr.open("POST", `/admin/returnImportedProduct`, true);
                 xhr.setRequestHeader('x-csrf-token', '{{csrf_token()}}');
                 xhr.send(formData);
             } catch (e) {
                 alert(e)
             }
+        }
+
+        function returnProductImportedSerialNumber(product_id, product_sn) {
+            try {
+                let import_id = document.querySelector('#txtImportId').value;
+
+                let xhr = new XMLHttpRequest();
+                let formData = new FormData();
+
+                formData.append("import_id", import_id);
+                formData.append("product_id", product_id);
+                formData.append("serial_number", product_sn);
+                formData.append("data", JSON.stringify(
+                    [{
+                        product_id,
+                        product_name: '',
+                        imported_qty: 0,
+                        return_qty: 1
+                    }]
+                ));
+
+                xhr.onload = (format, data) => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        let route = window.location.pathname + window.location.search;
+                        window.location = route;
+                    }
+                    else {
+                        let response = JSON.parse(xhr.responseText);
+                        alert(response.message);
+                    }
+                };
+
+                xhr.open("POST", `/admin/import_products/deleteAndReturnImportProductSerialNumber_OnlyOne`, true);
+                xhr.setRequestHeader('x-csrf-token', '{{csrf_token()}}');
+                xhr.send(formData);
+            } catch (e) {
+                alert(e)
+            }
+        }
+
+        function inputConstraintCannotBeNegative(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value < 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
+        }
+
+        function inputConstraintCannotBeNegativeAndZero(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value <= 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
         }
     </script>
 @endsection

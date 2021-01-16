@@ -76,22 +76,50 @@
 
             <div class="form-group">
                 <label for="txtCostOfSale">Cost of Sale</label>
-                <input type="number" class="form-control" id="txtCostOfSale" name="txtCostOfSale" placeholder="cost of sale" step="0.01" required>
+                <input type="number"
+                       class="form-control"
+                       id="txtCostOfSale"
+                       name="txtCostOfSale"
+                       placeholder="cost of sale"
+                       step="0.01"
+                       required
+                       onchange="inputConstraintCannotBeNegative('txtCostOfSale', 0)">
             </div>
 
             <div class="form-group">
                 <label for="txtUnitInStock">Unit In Stock</label>
-                <input type="number" class="form-control" id="txtUnitInStock" name="txtUnitInStock" placeholder="unit in stock" required>
+                <input type="number"
+                       class="form-control"
+                       id="txtUnitInStock"
+                       name="txtUnitInStock"
+                       placeholder="unit in stock"
+                       required
+                       onchange="inputConstraintCannotBeNegative('txtUnitInStock', 0)">
             </div>
 
             <div class="form-group">
                 <label for="txtSalePrice">Sale Price</label>
-                <input type="number" class="form-control" id="txtSalePrice" name="txtSalePrice" placeholder="sale price" step="0.01" required>
+                <input type="number"
+                       class="form-control"
+                       id="txtSalePrice"
+                       name="txtSalePrice"
+                       placeholder="sale price"
+                       step="0.01"
+                       required
+                       onchange="inputConstraintCannotBeNegative('txtSalePrice', 0)">
             </div>
 
             <div class="form-group">
                 <label for="txtDiscountPrice">Discount Price</label>
-                <input type="number" class="form-control" id="txtDiscountPrice" name="txtDiscountPrice" placeholder="discount" step="0.01" value="0" required>
+                <input type="number"
+                       class="form-control"
+                       id="txtDiscountPrice"
+                       name="txtDiscountPrice"
+                       placeholder="discount"
+                       step="0.01"
+                       value="0"
+                       required
+                       onchange="inputConstraintCannotBeNegative('txtDiscountPrice', 0)">
             </div>
 
             <div class="form-group">
@@ -127,6 +155,25 @@
                     </div>
                     <div class="modal-body">
                         Add Product Successfully!
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="messageDescriptionErrorModal" tabindex="-1" role="dialog" aria-labelledby="messageDescriptionErrorModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="messageDescriptionErrorModalLabel">Error</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Description is required.
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -173,6 +220,12 @@
             let category_id = document.querySelector("#selectCategory").value;
             let brand_id = document.querySelector("#selectBrand").value;
             let description = CKEDITOR.instances['txtDescription'].getData();
+
+            if(!description) {
+                $('#messageDescriptionErrorModal').modal('show');
+                return;
+            }
+
             let cost_of_sale = document.querySelector("#txtCostOfSale").value;
             let unit_in_stock = document.querySelector("#txtUnitInStock").value;
             let sale_price = document.querySelector("#txtSalePrice").value;
@@ -199,7 +252,8 @@
                     document.getElementById("img_thumbnail").setAttribute('src', '{{ asset('images/no_image_available.png') }}');
                     CKEDITOR.instances['txtDescription'].setData(' ');
 
-                    document.getElementById('alertSuccessful').style.display = 'block';
+                    // document.getElementById('alertSuccessful').style.display = 'block';
+                    $('#messageModal').modal('show');
                 }
                 else {
                     const response = JSON.parse(xhr.responseText);
@@ -218,5 +272,19 @@
             document.getElementById("img_thumbnail").setAttribute('src', '{{ asset('images/no_image_available.png') }}');
             CKEDITOR.instances['txtDescription'].setData(' ');
         });
+
+        function inputConstraintCannotBeNegative(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value < 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
+        }
+
+        function inputConstraintCannotBeNegativeAndZero(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value <= 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
+        }
     </script>
 @endsection

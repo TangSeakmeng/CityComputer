@@ -76,4 +76,21 @@ class ProductSerialNumberController extends Controller
             return response()->json(['error' => $exception->getMessage()], 401);
         }
     }
+
+    public static function deleteAndReturnSoldProductSerialNumber(Request $request) {
+        try {
+            ReturnSoldProduct::submitReturnSoldProducts($request);
+
+            $result = DB::table('productssoldwithserialnumber')
+                ->where('id', '=', $request->return_id)
+                ->first();
+
+            DB::update("update productserialnumbers set status = 'Available' where serial_number = '{$result->serial_number}' and product_id = '{$result->product_id}'");
+            DB::DELETE ('delete from productssoldwithserialnumber where id = ' . $request->return_id);
+
+            return response()->json(['success' => 'Product Serial Number is deleted successfully.'], 201);
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 401);
+        }
+    }
 }

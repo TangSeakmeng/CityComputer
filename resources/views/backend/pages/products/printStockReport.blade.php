@@ -19,7 +19,7 @@
 <body>
     <div class="header">
         <button class="btn btn-warning" onclick="backToProducts()">
-            Back to Website
+            Back
         </button>
         <h1 class="display-4">Stock Report</h1>
         <button class="btn btn-success" onclick="onClickPrint()">
@@ -194,6 +194,13 @@
 
             let fromCreatedDate = document.querySelector("#formCreatedDate").value;
             let toCreatedDate = document.querySelector("#toCreatedDate").value;
+
+            if(new Date(fromCreatedDate) > new Date(toCreatedDate)) {
+                $('#exampleModal').modal('show');
+                document.querySelector('#messageBody').innerHTML = 'Please from date can not be after to date.';
+                return;
+            }
+
             let selectedBrands = arr_selectedBrands;
             let selectedCategories = arr_selectedCategories;
 

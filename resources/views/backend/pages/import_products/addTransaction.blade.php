@@ -75,11 +75,11 @@
                     </div>
                     <div class="form-group">
                         <label for="txtCostofSale">Cost of Sale</label>
-                        <input type="number" class="form-control" id="txtCostofSale" name="txtCostofSale" placeholder="cost of sale" step="0.01">
+                        <input type="number" class="form-control" id="txtCostofSale" name="txtCostofSale" placeholder="cost of sale" step="0.01" value="0" onchange="inputConstraintCannotBeNegative('txtCostofSale', 0)">
                     </div>
                     <div class="form-group">
                         <label for="txtQuantity">Quantity</label>
-                        <input type="number" class="form-control" id="txtQuantity" name="txtQuantity" placeholder="quantity" value="0">
+                        <input type="number" class="form-control" id="txtQuantity" name="txtQuantity" placeholder="quantity" value="0" onchange="inputConstraintCannotBeNegative('txtQuantity', 0)">
                     </div>
                     <div class="form-group">
                         <label>Image</label>
@@ -593,9 +593,15 @@
         function rowQtyChanged(rowIndex) {
             try {
                 let value = document.querySelector('#txtRowProductQty' + rowIndex).value;
-                arr_ImportedProduct[rowIndex].quantity = value;
 
-                calculateTotalQuantity();
+                if(value == "" || value < 0) {
+                    document.querySelector('#txtRowProductQty' + rowIndex).value = 0;
+                    arr_ImportedProduct[rowIndex].quantity = 0;
+                    calculateTotalQuantity();
+                } else {
+                    arr_ImportedProduct[rowIndex].quantity = value;
+                    calculateTotalQuantity();
+                }
             } catch (e) {
                 alert(e)
             }
@@ -920,6 +926,20 @@
             } catch (e) {
                 alert(e)
             }
+        }
+
+        function inputConstraintCannotBeNegative(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value < 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
+        }
+
+        function inputConstraintCannotBeNegativeAndZero(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value <= 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
         }
     </script>
 @endsection

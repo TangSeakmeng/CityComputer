@@ -278,6 +278,18 @@ class ImportProductsController extends Controller
         }
     }
 
+    public static function deleteAndReturnImportProductSerialNumber_OnlyOne(Request $request) {
+        try {
+            ReturnImportedProduct::submitReturnImportedProducts($request);
+
+            DB::delete("delete from productserialnumbers where import_id={$request->import_id} and product_id={$request->product_id} and serial_number={$request->serial_number}");
+
+            return response()->json(['message' => 'Product SerialNumber are return and delete successfully.'], 201);
+        } catch (QueryException $exception) {
+            return response()->json(['error' => $exception->getMessage()], 401);
+        }
+    }
+
     public function getImportDetailsByImportId($id)
     {
         try {

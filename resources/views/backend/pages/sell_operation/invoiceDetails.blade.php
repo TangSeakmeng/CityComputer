@@ -129,7 +129,7 @@
                         <button type="button" class="btn btn-danger" onclick="deleteProductSoldSerialNumber({{ $item->id }})">
                             x
                         </button>
-                        <button type="button" class="btn btn-success">
+                        <button type="button" class="btn btn-success" onclick="returnProductSoldSerialNumber({{ $item->id }}, {{ $item->product_id }})">
                             Return
                         </button>
                     </td>
@@ -712,6 +712,43 @@
                 };
 
                 xhr.open("POST", `/admin/returnSoldProduct/`, true);
+                xhr.setRequestHeader('x-csrf-token', '{{csrf_token()}}');
+                xhr.send(formData);
+            } catch (e) {
+                alert(e)
+            }
+        }
+
+        function returnProductSoldSerialNumber(return_id, product_id) {
+            try {
+                let invoice_id = document.querySelector('#txtInvoiceID').value;
+
+                let xhr = new XMLHttpRequest();
+                let formData = new FormData();
+
+                formData.append("return_id", return_id);
+                formData.append("invoice_id", invoice_id);
+                formData.append("data", JSON.stringify(
+                    [{
+                        product_id,
+                        product_name: '',
+                        sold_qty: 0,
+                        return_qty: 1
+                    }]
+                ));
+
+                xhr.onload = (format, data) => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        let route = window.location.pathname + window.location.search;
+                        window.location = route;
+                    }
+                    else {
+                        let response = JSON.parse(xhr.responseText);
+                        alert(response.message);
+                    }
+                };
+
+                xhr.open("POST", `/admin/delete_and_return_sold_product_serial_number`, true);
                 xhr.setRequestHeader('x-csrf-token', '{{csrf_token()}}');
                 xhr.send(formData);
             } catch (e) {

@@ -68,7 +68,7 @@ class ReturnImportedProduct extends Controller
                 ->where('import_id', '=', $importId)
                 ->first();
 
-            $result = round($result->sum_import_cost / 1000) * 1000;
+            $result = round($result->sum_import_cost, 3);
 
             DB::update("update imports set import_total={$result} where id = {$importId}");
 

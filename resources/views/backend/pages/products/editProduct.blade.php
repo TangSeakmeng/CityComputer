@@ -33,12 +33,24 @@
 
             <div class="form-group">
                 <label for="txtBarcode">Barcode</label>
-                <input type="text" class="form-control" id="txtBarcode" name="txtBarcode" placeholder="barcode" required value="{{ $data->barcode }}">
+                <input type="text"
+                       class="form-control"
+                       id="txtBarcode"
+                       name="txtBarcode"
+                       placeholder="barcode"
+                       required
+                       value="{{ $data->barcode }}">
             </div>
 
             <div class="form-group">
                 <label for="txtName">Name</label>
-                <input type="text" class="form-control" id="txtName" name="txtName" placeholder="product name" required value="{{ $data->name }}">
+                <input type="text"
+                       class="form-control"
+                       id="txtName"
+                       name="txtName"
+                       placeholder="product name"
+                       required
+                       value="{{ $data->name }}">
             </div>
 
             <div class="form-group">
@@ -74,22 +86,53 @@
 
             <div class="form-group">
                 <label for="txtCostOfSale">Cost of Sale</label>
-                <input type="number" class="form-control" id="txtCostOfSale" name="txtCostOfSale" placeholder="cost of sale" step="any" required value="{{ $data->cost_of_sale }}">
+                <input type="number"
+                       class="form-control"
+                       id="txtCostOfSale"
+                       name="txtCostOfSale"
+                       placeholder="cost of sale"
+                       step="any"
+                       required
+                       value="{{ $data->cost_of_sale }}"
+                       onchange="inputConstraintCannotBeNegative('txtCostOfSale', 0)">
             </div>
 
             <div class="form-group">
                 <label for="txtUnitInStock">Unit In Stock</label>
-                <input type="number" class="form-control" id="txtUnitInStock" name="txtUnitInStock" placeholder="unit in stock" required value="{{ $data->unit_in_stock }}">
+                <input type="number"
+                       class="form-control"
+                       id="txtUnitInStock"
+                       name="txtUnitInStock"
+                       placeholder="unit in stock"
+                       required
+                       value="{{ $data->unit_in_stock }}"
+                       onchange="inputConstraintCannotBeNegative('txtUnitInStock', 0)">
             </div>
 
             <div class="form-group">
                 <label for="txtSalePrice">Sale Price</label>
-                <input type="number" class="form-control" id="txtSalePrice" name="txtSalePrice" placeholder="sale price" step="any" required value="{{ $data->price }}">
+                <input type="number"
+                       class="form-control"
+                       id="txtSalePrice"
+                       name="txtSalePrice"
+                       placeholder="sale price"
+                       step="any"
+                       required
+                       value="{{ $data->price }}"
+                       onchange="inputConstraintCannotBeNegative('txtSalePrice', 0)">
             </div>
 
             <div class="form-group">
                 <label for="txtDiscountPrice">Discount Price</label>
-                <input type="number" class="form-control" id="txtDiscountPrice" name="txtDiscountPrice" placeholder="discount" step="any" required value="{{ $data->discount_price }}">
+                <input type="number"
+                       class="form-control"
+                       id="txtDiscountPrice"
+                       name="txtDiscountPrice"
+                       placeholder="discount"
+                       step="any"
+                       required
+                       value="{{ $data->discount_price }}"
+                       onchange="inputConstraintCannotBeNegative('txtDiscountPrice', 0)">
             </div>
 
             <div class="form-group">
@@ -214,5 +257,19 @@
             xhr.setRequestHeader('x-csrf-token', '{{csrf_token()}}');
             xhr.send(formData);
         })
+
+        function inputConstraintCannotBeNegative(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value < 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
+        }
+
+        function inputConstraintCannotBeNegativeAndZero(inputName, defaultValue) {
+            let value = document.querySelector(`#${inputName}`).value;
+
+            if(value == "" || value <= 0)
+                document.querySelector(`#${inputName}`).value = defaultValue;
+        }
     </script>
 @endsection

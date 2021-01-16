@@ -56,7 +56,7 @@ class ReportController extends Controller
                 $result = DB::table('products')
                     ->join('brands', 'brands.id', '=', 'products.brand_id')
                     ->join('categories', 'categories.id', '=', 'products.category_id')
-                    ->whereBetween('created_at', [ $request->fromCreatedDate . ' 23:59:59', $request->toCreatedDate . ' 23:59:59'])
+                    ->whereBetween('products.created_at', [ $request->fromCreatedDate . ' 23:59:59', $request->toCreatedDate . ' 23:59:59'])
                     ->orderBy('brand_id')
                     ->orderBy('category_id')
                     ->select('products.id', 'products.name as product_name', 'products.barcode as product_barcode'
@@ -80,7 +80,7 @@ class ReportController extends Controller
                     ->join('brands', 'brands.id', '=', 'products.brand_id')
                     ->join('categories', 'categories.id', '=', 'products.category_id')
                     ->whereIn('brand_id', $arr_brands)
-                    ->whereBetween('created_at', [ $request->fromCreatedDate . ' 23:59:59', $request->toCreatedDate . ' 23:59:59'])
+                    ->whereBetween('products.created_at', [ $request->fromCreatedDate . ' 23:59:59', $request->toCreatedDate . ' 23:59:59'])
                     ->orderBy('brand_id')
                     ->orderBy('category_id')
                     ->select('products.id', 'products.name as product_name', 'products.barcode as product_barcode'
@@ -92,7 +92,7 @@ class ReportController extends Controller
                     ->join('brands', 'brands.id', '=', 'products.brand_id')
                     ->join('categories', 'categories.id', '=', 'products.category_id')
                     ->whereIn('category_id', $arr_categories)
-                    ->whereBetween('created_at', [ $request->fromCreatedDate . ' 23:59:59', $request->toCreatedDate . ' 23:59:59'])
+                    ->whereBetween('products.created_at', [ $request->fromCreatedDate . ' 23:59:59', $request->toCreatedDate . ' 23:59:59'])
                     ->orderBy('brand_id')
                     ->orderBy('category_id')
                     ->select('products.id', 'products.name as product_name', 'products.barcode as product_barcode'
@@ -105,7 +105,7 @@ class ReportController extends Controller
                     ->join('categories', 'categories.id', '=', 'products.category_id')
                     ->whereIn('brand_id', $arr_brands)
                     ->whereIn('category_id', $arr_categories)
-                    ->whereBetween('created_at', [ $request->fromCreatedDate . ' 23:59:59', $request->toCreatedDate . ' 23:59:59'])
+                    ->whereBetween('products.created_at', [ $request->fromCreatedDate . ' 23:59:59', $request->toCreatedDate . ' 23:59:59'])
                     ->orderBy('brand_id')
                     ->orderBy('category_id')
                     ->select('products.id', 'products.name as product_name', 'products.barcode as product_barcode'
